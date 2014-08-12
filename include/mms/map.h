@@ -28,6 +28,8 @@
 
 #pragma once
 
+#include <assert.h>
+
 #include "type_traits.h"
 #include "writer.h"
 #include "copy.h"
@@ -75,7 +77,13 @@ public:
     {
         typename Base::const_iterator i = Base::find(key);
         if (i == Base::end())
+
+#ifndef MMS_NO_EXCEPTIONS
             throw std::out_of_range("mms::map::operator[]");
+#else
+            assert(false && "out of range");
+#endif
+
         return i->second;
     }
 

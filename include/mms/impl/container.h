@@ -28,6 +28,7 @@
 
 #pragma once
 
+#include <assert.h>
 #include <stdlib.h>
 
 #include <algorithm>
@@ -148,7 +149,11 @@ public:
     const value_type& at(size_t n) const
     {
         if (n >= size()) {
+#ifndef MMS_NO_EXCEPTIONS
             throw std::out_of_range("mms::Sequence::at");
+#else
+            assert(false && "out of range");
+#endif
         }
         return (*this)[n];
     }

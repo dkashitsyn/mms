@@ -28,6 +28,8 @@
 
 #pragma once
 
+#include <assert.h>
+
 #include "impl/config.h"
 
 #ifdef MMS_FEATURES_OPTIONAL
@@ -72,7 +74,11 @@ public:
     const T * get_ptr() const
     {
         if (!is_initialized()) {
+#ifndef MMS_NO_EXCEPTIONS
             throw std::logic_error("mms::optional::get_ptr");
+#else
+            assert(false && "not initialized");
+#endif
         }
         return ptr<T>();
     }

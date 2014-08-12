@@ -28,6 +28,8 @@
 
 #pragma once
 
+#include <assert.h>
+
 #include "impl/config.h"
 #include "impl/defs.h"
 #include "impl/container.h"
@@ -60,7 +62,11 @@ public:
         char* p = reinterpret_cast<char*>(ptr);
         PointeeHeader* hdr = reinterpret_cast<PointeeHeader*>(p - sizeof(PointeeHeader));
         if (hdr->magic_ != Magic)
+#ifndef MMS_NO_EXCEPTIONS
             throw std::logic_error("pointee magic not found (pointee allocated on stack?)");
+#else
+            assert(false && "pointee magic not found (pointee allocated on stack?)");
+#endif
         return *hdr;
     }
 
@@ -85,7 +91,11 @@ public:
     void endedWriting(size_t pos)
     {
         if (pos & ~PosMask)
+#ifndef MMS_NO_EXCEPTIONS
             throw std::logic_error("object position is not a multiple of machine-word-size");
+#else
+            assert(false && "object position is not a multiple of machine-word-size");
+#endif
         if (!(pos_ & HasPos)) pos_ = pos | HasPos;
     }
     void clean() { pos_ = 0; }

@@ -28,6 +28,8 @@
 
 #pragma once
 
+#include <assert.h>
+
 #include "impl/config.h"
 
 #ifdef MMS_FEATURES_HASH
@@ -60,7 +62,11 @@ public:
     {
         typename Base::const_iterator i = Base::find(k);
         if (i == Base::end())
+#ifndef MMS_NO_EXCEPTIONS
             throw std::out_of_range("unordered_map::at()");
+#else
+            assert(false && "out of bounds");
+#endif
         return i->second;
     }
 

@@ -28,6 +28,8 @@
 
 #pragma once
 
+#include <assert.h>
+
 #include "defs.h"
 #include "container.h"
 #include "../writer.h"
@@ -100,7 +102,11 @@ public:
         for (size_t bkt = 0; bkt != bktCount; ++bkt)
             for (typename Container::const_local_iterator i = c.begin(bkt), ie = c.end(bkt); i != ie; ++i) {
                 if (hashVal(*i) % bktCount != bkt)
+#ifndef MMS_NO_EXCEPTIONS
                     throw std::logic_error("Bucket index mismatch while building mms::hashtable");
+#else
+                    assert(false && "Bucket index mismatch while building mms::hashtable");
+#endif
                 impl::writeData(w, *i, OfsPopulateIter(ofs));
             }
 

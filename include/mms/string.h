@@ -34,6 +34,7 @@
 #include "impl/container.h"
 #include "impl/fwd.h"
 
+#include <assert.h>
 #include <iostream>
 #include <string>
 
@@ -61,7 +62,11 @@ public:
     string(const char* str, size_t size): impl::Sequence<char>(str, size)
     {
         if (str[size] != 0)
+#ifndef MMS_NO_EXCEPTIONS
             throw std::logic_error("the string has no trailing zero");
+#else
+            assert(false && "the string has no trailing zero");
+#endif
     }
 
     const char* c_str() const { return ptr<char>(); }
