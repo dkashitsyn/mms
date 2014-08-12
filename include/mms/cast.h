@@ -38,6 +38,8 @@ const T& unsafeCast(const char* buffer, size_t size) {
     return *reinterpret_cast<const T*>(buffer + size - sizeof(T));
 }
 
+#ifndef MMS_NO_TYPEID
+
 template <class T>
 const T& safeCast(const char* buffer, size_t size) {
     if (size < sizeof(T) + sizeof(FormatVersion)) {
@@ -52,6 +54,8 @@ const T& safeCast(const char* buffer, size_t size) {
         );
     return object;
 }
+
+#endif
 
 template <class T>
 const T& cast(const char* buffer, size_t size) {

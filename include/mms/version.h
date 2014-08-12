@@ -68,6 +68,10 @@ public:
     template<class T>
     Ver get()
     {
+#ifdef MMS_NO_TYPEID
+        static const Ver DUMMY = hash("dummy");
+        return DUMMY;
+#else
         static const Ver RECURSIVE = hash("recursive");
         const std::type_info* ti = &typeid(T);
         std::pair<SeenSet::iterator, bool> pair = seen_.insert(ti);
@@ -78,6 +82,7 @@ public:
         } else {
             return RECURSIVE;
         }
+#endif
     }
 
     Ver combine(Ver lhs, Ver rhs)
@@ -190,17 +195,22 @@ template<class TMM>
 struct FormatVersionHelper<TMM, false, false, false, false> {
     static FormatVersion version(Versions& vs)
     {
+#ifndef MMS_NO_TYPEID
         if (mms::type_traits::is_trivial<TMM>::value) {
             return vs.combine(vs.hash(typeid(TMM).name()), sizeof(TMM));
         } else {
             return 0; // FIXME: better fail here, but will break existing data
         }
+#else
+    return 0;
+#endif
     }
 };
 
 template<class TSA>
 void checkFormatVersion(const TSA&, FormatVersion writtenVersion)
 {
+#ifndef MMS_NO_TYPEID
     FormatVersion actualVersion = Versions().get<TSA>();
     if (actualVersion != writtenVersion) {
         std::ostringstream msg;
@@ -209,6 +219,7 @@ void checkFormatVersion(const TSA&, FormatVersion writtenVersion)
             << ", encountered " << writtenVersion << ")";
         throw std::runtime_error(msg.str());
     }
+#endif
 }
 
 } // namespace impl
