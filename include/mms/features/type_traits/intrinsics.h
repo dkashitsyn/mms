@@ -34,11 +34,20 @@
 #    define MMS_FEATURES_TYPE_TRAITS INTRINSICS
 #endif
 
+#ifdef MMS_USE_TR1
+	#include <tr1/type_traits>
+#endif
+
 namespace mms {
 namespace type_traits {
 
-template<class T> struct is_trivial { static const bool value == __is_pod(T); };
-template<class B, class D> struct is_base_of { static const bool value = __is_base_of(B, D); };
+#ifdef MMS_USE_TR1
+	template<class T> struct is_trivial : public std::tr1::is_pod<T> {};
+	template<class B, class D> struct is_base_of : public std::tr1::is_base_of<B,D> {};
+#else
+	template<class T> struct is_trivial { static const bool value == __is_pod(T); };
+	template<class B, class D> struct is_base_of { static const bool value = __is_base_of(B, D); };
+#endif
 
 template<bool C, class T> struct enable_if {};
 template<class T> struct enable_if<true, T> { typedef T type; };

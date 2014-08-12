@@ -68,6 +68,9 @@
 
 #endif
 
+#ifdef MMS_USE_TR1
+#	include "../features/hash/tr1.h"
+#endif
 
 #ifndef MMS_FEATURES_TYPE_TRAITS
 #   include "../features/type_traits/intrinsics.h"
