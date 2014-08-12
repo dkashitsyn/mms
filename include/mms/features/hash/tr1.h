@@ -6,7 +6,9 @@
 
 #include <cstddef>
 
+#ifndef MMS_NO_TYPEID
 #include <tr1/functional>
+#endif
 
 namespace mms {
 
@@ -15,7 +17,11 @@ namespace impl {
 template<class T>
 inline size_t hash_combine(size_t hash, const T& t)
 {
+#ifndef MMS_NO_TYPEID
 	return hash ^ (std::tr1::hash<T>()(t) + 0x9e3779b9 + (hash << 6) + (hash >> 2)); // stolen from boost
+#else
+	return 0;
+#endif
 }
 
 template<class Iter>
